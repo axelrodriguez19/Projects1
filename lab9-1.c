@@ -1,5 +1,6 @@
+//Axel Rodriguez
 #include <stdio.h>
-
+#define TABLE_SIZE 100
 // RecordType
 struct RecordType
 {
@@ -11,13 +12,13 @@ struct RecordType
 // Fill out this structure
 struct HashType
 {
-
+    struct RecordType *records[TABLE_SIZE];
 };
 
 // Compute the hash function
 int hash(int x)
 {
-
+    return x % TABLE_SIZE;
 }
 
 // parses input file to an integer array
@@ -80,6 +81,8 @@ void displayRecordsInHash(struct HashType *pHashArray, int hashSz)
 	for (i=0;i<hashSz;++i)
 	{
 		// if index is occupied with any records, print all
+		printf("Hash index %d:\n", i);
+        printf("ID: %d, Name: %c, Order: %d\n", pHashArray->records[i]->id, pHashArray->records[i]->name, pHashArray->records[i]->order);
 	}
 }
 
@@ -91,4 +94,24 @@ int main(void)
 	recordSz = parseData("input.txt", &pRecords);
 	printRecords(pRecords, recordSz);
 	// Your hash implementation
+	
+	//input file
+    recordSz = parseData("input.txt", &pRecords);
+
+    printRecords(pRecords, recordSz);
+
+    //hash
+    struct HashType *hashTable = (struct HashType *)malloc(sizeof(struct HashType));
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        hashTable->records[i] = NULL;
+    }
+
+    for (int i = 0; i < recordSz; i++) {
+        int hashedValue = hash(pRecords[i].id);
+        hashTable->records[hashedValue] = &pRecords[i];
+    }
+    
+    displayRecordsInHash(hashTable, TABLE_SIZE);
+
+	free(hashTable);
 }
